@@ -141,6 +141,25 @@
   animation: breathe 2s ease-in-out infinite;
 }
 
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-card-in {
+  animation: card-in 0.18s ease-out both;
+}
+
+/* Success card glow */
+.card-glow-success {
+  box-shadow: inset 0 0 0 1px hsl(160 68% 52% / 0.4), 0 0 12px hsl(160 68% 52% / 0.15);
+}
+
 /* Noise texture for depth map simulation */
 .depth-gradient {
   background: linear-gradient(135deg, 
