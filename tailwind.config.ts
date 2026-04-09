@@ -89,10 +89,51 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        // ThoughtStream — main card slide-in.
+        // Starts off-screen left, skewed and blurred, then snaps into place
+        // with a cyan glow pulse. Uses a custom cubic-bezier for a "whip"
+        // feeling (overshoot + settle).
+        "thought-in": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(-40px) translateY(6px) skewX(-8deg) scale(0.96)",
+            filter: "blur(6px)",
+            boxShadow: "0 0 0 rgba(0,229,255,0)",
+          },
+          "55%": {
+            opacity: "1",
+            transform: "translateX(4px) translateY(0) skewX(1deg) scale(1.015)",
+            filter: "blur(0)",
+            boxShadow: "0 0 24px rgba(0,229,255,0.45)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0) translateY(0) skewX(0) scale(1)",
+            filter: "blur(0)",
+            boxShadow: "0 0 0 rgba(0,229,255,0)",
+          },
+        },
+        // ThoughtStream — horizontal scanline that sweeps across the card
+        // immediately after it lands, like a HUD is "reading" it.
+        "thought-scan": {
+          "0%": { transform: "translateX(-100%)", opacity: "0" },
+          "15%": { opacity: "1" },
+          "85%": { opacity: "1" },
+          "100%": { transform: "translateX(100%)", opacity: "0" },
+        },
+        // ThoughtStream — timeline dot ignition flash.
+        "thought-dot": {
+          "0%": { transform: "scale(0)", boxShadow: "0 0 0 0 rgba(0,229,255,0.9)" },
+          "60%": { transform: "scale(1.6)", boxShadow: "0 0 0 10px rgba(0,229,255,0)" },
+          "100%": { transform: "scale(1)", boxShadow: "0 0 0 0 rgba(0,229,255,0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "thought-in": "thought-in 0.65s cubic-bezier(0.22, 1.2, 0.36, 1) both",
+        "thought-scan": "thought-scan 0.9s ease-out 0.2s both",
+        "thought-dot": "thought-dot 0.7s ease-out both",
       },
     },
   },

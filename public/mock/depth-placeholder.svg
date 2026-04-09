@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="depth" cx="50%" cy="55%" r="70%">
+      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.9"/>
+      <stop offset="25%" stop-color="#2b6cff" stop-opacity="0.7"/>
+      <stop offset="55%" stop-color="#6a2bd2" stop-opacity="0.55"/>
+      <stop offset="85%" stop-color="#1a0b3a" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#05070f"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="480" fill="#05070f"/>
+  <rect width="640" height="480" fill="url(#depth)"/>
+  <g fill="none" stroke="#00E5FF" stroke-opacity="0.25">
+    <ellipse cx="320" cy="270" rx="180" ry="110" stroke-width="1"/>
+    <ellipse cx="320" cy="270" rx="120" ry="70"  stroke-width="1"/>
+    <ellipse cx="320" cy="270" rx="60"  ry="36"  stroke-width="1"/>
+  </g>
+  <g font-family="JetBrains Mono, monospace" fill="#ffffff" fill-opacity="0.85">
+    <text x="20" y="40" font-size="14" font-weight="700" letter-spacing="3">DEPTH · MAP</text>
+    <text x="20" y="60" font-size="10" fill-opacity="0.6">RANGE 0.2m — 8.0m</text>
+    <text x="20" y="460" font-size="10" fill-opacity="0.5">PLACEHOLDER</text>
+  </g>
+</svg>
