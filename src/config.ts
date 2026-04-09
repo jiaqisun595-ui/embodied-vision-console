@@ -36,7 +36,7 @@ export const ENDPOINTS = {
 const BASE = import.meta.env.BASE_URL; // e.g. "/embodied-vision-console/"
 
 export const FALLBACKS = {
-  rgb: `${BASE}mock/rgb-placeholder.svg`,
+  rgb: `${BASE}mock/rgb-feed.gif`,
   depth: `${BASE}mock/depth-placeholder.svg`,
   worldModel3D: `${BASE}mock/world-placeholder.svg`,
 } as const;
