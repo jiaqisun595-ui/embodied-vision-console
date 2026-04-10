@@ -1,15 +1,23 @@
 // ThoughtStream — left-column component for the exhibition display.
-// Self-contained, always running. Pulls items from MOCK_THOUGHTS one by one
-// on a fixed interval, auto-scrolls to the newest card, and loops forever.
+// Self-contained, always running. Two data sources:
 //
-// When the real brain-module endpoint is ready, swap the `MOCK_THOUGHTS`
-// import for a hook / fetcher that returns `ThoughtItem[]`. The rendering
-// logic here does not need to change.
+//   1. LIVE mode (default when ENDPOINTS.thoughtStream is set):
+//      useBrainLatest polls GET <thoughtStream>/api/brain/latest every
+//      THOUGHT_POLL_INTERVAL_MS and appends each new card as it arrives.
+//
+//   2. MOCK mode (when ENDPOINTS.thoughtStream is empty):
+//      Cycles through MOCK_THOUGHTS on a fixed interval so the exhibit still
+//      plays when the brain service isn't up yet.
+//
+// The rendering logic is identical in both modes — only the source of
+// ThoughtItem[] differs.
 
 import { useEffect, useRef, useState } from "react";
 import { MOCK_THOUGHTS, type ThoughtItem, type ThoughtRole } from "@/data/mockThoughts";
+import { ENDPOINTS, THOUGHT_POLL_INTERVAL_MS } from "@/config";
+import { useBrainLatest } from "@/hooks/useBrainLatest";
 
-// How often a new card appears (ms). Tunable — slower feels more "thinky".
+// How often a MOCK card appears (ms). Only used when no live endpoint is set.
 const CARD_INTERVAL_MS = 1800;
 // How many cards to keep on screen before dropping the oldest. Prevents
 // unbounded DOM growth during long demo loops.
@@ -62,8 +70,47 @@ const ThoughtStream = () => {
   const uidRef = useRef(0);
   const clockRef = useRef(0);
 
-  // Push a new card every CARD_INTERVAL_MS. Loops through MOCK_THOUGHTS.
+  // LIVE source. When ENDPOINTS.thoughtStream is empty this stays idle
+  // (thoughts === []) and we fall back to the mock loop below.
+  // Cast widens the `as const` literal "" so downstream string ops typecheck
+  // even while the endpoint is still empty at authoring time.
+  const rawThoughtBase = ENDPOINTS.thoughtStream as string;
+  const liveEndpoint = rawThoughtBase
+    ? `${rawThoughtBase.replace(/\/$/, "")}/api/brain/latest`
+    : "";
+  const { thoughts: liveThoughts, connected: liveConnected } = useBrainLatest(
+    liveEndpoint,
+    THOUGHT_POLL_INTERVAL_MS,
+  );
+
+  // Append new LIVE cards as they arrive from the brain endpoint.
+  const liveSeenRef = useRef(0);
   useEffect(() => {
+    if (!liveEndpoint) return;
+    if (liveThoughts.length <= liveSeenRef.current) return;
+
+    const fresh = liveThoughts.slice(liveSeenRef.current);
+    liveSeenRef.current = liveThoughts.length;
+
+    setDisplayed((prev) => {
+      const next = [...prev];
+      for (const item of fresh) {
+        clockRef.current += THOUGHT_POLL_INTERVAL_MS / 1000;
+        next.push({
+          ...item,
+          uid: uidRef.current++,
+          time: formatClock(clockRef.current),
+        });
+      }
+      return next.length > MAX_VISIBLE_CARDS
+        ? next.slice(next.length - MAX_VISIBLE_CARDS)
+        : next;
+    });
+  }, [liveThoughts, liveEndpoint]);
+
+  // MOCK loop. Runs only when there is no live endpoint configured.
+  useEffect(() => {
+    if (liveEndpoint) return;
     if (MOCK_THOUGHTS.length === 0) return;
 
     const tick = () => {
@@ -89,7 +136,7 @@ const ThoughtStream = () => {
     tick();
     const id = window.setInterval(tick, CARD_INTERVAL_MS);
     return () => window.clearInterval(id);
-  }, []);
+  }, [liveEndpoint]);
 
   // Auto-scroll to the bottom whenever a new card is added.
   useEffect(() => {
@@ -106,7 +153,7 @@ const ThoughtStream = () => {
           THOUGHT STREAM
         </span>
         <span className="text-[10px] tracking-widest text-[#00E5FF]/40">
-          LIVE · MOCK
+          {liveEndpoint ? (liveConnected ? "LIVE" : "LIVE · WAITING") : "MOCK"}
         </span>
       </div>
 

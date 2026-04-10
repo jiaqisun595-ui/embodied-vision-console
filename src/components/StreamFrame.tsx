@@ -1,49 +1,38 @@
-// StreamFrame — shared base used by RGBVideo / DepthVideo / WorldModel3D.
+// StreamFrame — shared chrome around the robot's RGB and depth MJPEG feeds.
 //
-// Behaviour:
-//   • If `src` is non-empty, render it inside an <img> (works for MJPEG
-//     streams and static images alike).
-//   • On load error OR empty src, swap to `fallbackSrc` so the display never
-//     goes blank during the demo.
-//   • After a failure, re-attempt the live stream every RETRY_INTERVAL_MS —
-//     this way the UI self-heals when Kai's robot service comes back online
-//     mid-show without anyone having to refresh the page.
+// The robot service (Kai) exposes two MJPEG endpoints:
+//   GET http://<IP>:<PORT>/rgb     · 640×480 · multipart/x-mixed-replace
+//   GET http://<IP>:<PORT>/depth   · 640×480 · multipart/x-mixed-replace
 //
-// Visuals: every frame carries a thin cyan border, corner brackets, a label
-// badge, and a "LIVE" / "FALLBACK" / "OFFLINE" status pill so viewers can
-// immediately tell whether what they're seeing is real or placeholder.
+// Because MJPEG works in a plain <img>, this component is intentionally tiny:
+// set `src` and the browser does the rest. No fallback image, no retry state
+// machine — the old scaffolding for that was removed once the endpoint URLs
+// were confirmed. If the stream is empty or errors, we just overlay an
+// OFFLINE badge and let the component self-heal on the next cache-busted
+// retry scheduled via RETRY_INTERVAL_MS.
 
 import { useEffect, useRef, useState } from "react";
 import { RETRY_INTERVAL_MS } from "@/config";
 
-type Status = "live" | "fallback" | "loading";
+type Status = "live" | "loading" | "offline";
 
 interface Props {
   /** Short label shown top-left, e.g. "RGB · FPV". */
   label: string;
   /** Optional sub-label shown next to the main label. */
   subLabel?: string;
-  /** Live stream / image URL. Empty string is treated as "no endpoint yet". */
+  /** MJPEG stream URL. Empty string means "no endpoint configured". */
   src: string;
-  /** Local placeholder served from /public. */
-  fallbackSrc: string;
   /** Optional custom object-fit. Defaults to "cover". */
   fit?: "cover" | "contain";
 }
 
-const StreamFrame = ({
-  label,
-  subLabel,
-  src,
-  fallbackSrc,
-  fit = "cover",
-}: Props) => {
-  const [status, setStatus] = useState<Status>(src ? "loading" : "fallback");
-  const [currentSrc, setCurrentSrc] = useState<string>(src || fallbackSrc);
+const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
+  const [status, setStatus] = useState<Status>(src ? "loading" : "offline");
+  const [imgSrc, setImgSrc] = useState<string>(src);
   const retryTimer = useRef<number | null>(null);
 
-  // Whenever the configured src changes (e.g. HMR after editing config.ts),
-  // reset state and try the live stream again.
+  // Whenever the configured src changes (HMR after editing config.ts), reset.
   useEffect(() => {
     if (retryTimer.current) {
       window.clearTimeout(retryTimer.current);
@@ -51,32 +40,29 @@ const StreamFrame = ({
     }
     if (src) {
       setStatus("loading");
-      setCurrentSrc(src);
+      setImgSrc(src);
     } else {
-      setStatus("fallback");
-      setCurrentSrc(fallbackSrc);
+      setStatus("offline");
+      setImgSrc("");
     }
     return () => {
       if (retryTimer.current) window.clearTimeout(retryTimer.current);
     };
-  }, [src, fallbackSrc]);
+  }, [src]);
 
   const handleLoad = () => {
-    // An <img> load event fires once the first MJPEG frame arrives.
-    if (currentSrc === src && src) setStatus("live");
+    // <img> load fires once the first MJPEG frame arrives.
+    if (src) setStatus("live");
   };
 
   const handleError = () => {
-    setStatus("fallback");
-    setCurrentSrc(fallbackSrc);
-    if (src) {
-      // Schedule a silent retry of the real endpoint.
-      retryTimer.current = window.setTimeout(() => {
-        setStatus("loading");
-        // Cache-bust so the browser actually refetches.
-        setCurrentSrc(`${src}${src.includes("?") ? "&" : "?"}_r=${Date.now()}`);
-      }, RETRY_INTERVAL_MS);
-    }
+    if (!src) return;
+    setStatus("offline");
+    // Silently retry — cache-bust so the browser actually refetches.
+    retryTimer.current = window.setTimeout(() => {
+      setStatus("loading");
+      setImgSrc(`${src}${src.includes("?") ? "&" : "?"}_r=${Date.now()}`);
+    }, RETRY_INTERVAL_MS);
   };
 
   const statusStyle = {
@@ -90,24 +76,39 @@ const StreamFrame = ({
       className: "bg-amber-400/15 text-amber-300 border-amber-400/40",
       dotClass: "bg-amber-400 animate-pulse",
     },
-    fallback: {
-      text: src ? "OFFLINE" : "MOCK",
-      className: "bg-[#00E5FF]/10 text-[#00E5FF]/80 border-[#00E5FF]/30",
-      dotClass: "bg-[#00E5FF]/70",
+    offline: {
+      text: "OFFLINE",
+      className: "bg-rose-500/10 text-rose-300 border-rose-400/40",
+      dotClass: "bg-rose-400",
     },
   }[status];
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-md border border-[#00E5FF]/25 bg-[#0A0E1A]">
-      {/* Image/stream layer */}
-      <img
-        src={currentSrc}
-        alt={label}
-        onLoad={handleLoad}
-        onError={handleError}
-        className={`h-full w-full ${fit === "cover" ? "object-cover" : "object-contain"}`}
-        draggable={false}
-      />
+      {/* Stream layer. Only mount the <img> when we actually have a URL,
+          otherwise we'd get a broken-image icon flashing behind the overlay. */}
+      {imgSrc && (
+        <img
+          src={imgSrc}
+          alt={label}
+          onLoad={handleLoad}
+          onError={handleError}
+          className={`h-full w-full ${fit === "cover" ? "object-cover" : "object-contain"}`}
+          draggable={false}
+        />
+      )}
+
+      {/* Offline placeholder — plain HUD text, no external asset needed. */}
+      {status === "offline" && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center font-mono text-[11px] tracking-[0.3em] text-[#00E5FF]/50">
+            <div className="text-[#00E5FF]/80">NO SIGNAL</div>
+            <div className="mt-1 text-[9px] text-[#00E5FF]/40">
+              waiting for {label}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Vignette + scanline overlay */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.55))]" />

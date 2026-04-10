@@ -2,43 +2,51 @@
 // GLOBAL CONFIG — the single "control panel" for this exhibition display.
 //
 // On-site, the ONLY file you should need to edit is this one:
-//   1. Paste the three video / stream URLs into ENDPOINTS.
+//   1. Paste the RGB + depth MJPEG URLs into ENDPOINTS.
 //   2. (Optional) Paste the thought-stream endpoint once the brain module
 //      team exposes one.
 //   3. Save. `npm run dev` (or `npm run build && npm run preview`) picks it up.
 //
-// If a URL is empty or the stream fails to load, the corresponding component
-// automatically falls back to the matching image in FALLBACKS below.
+// If a stream is empty or fails to load, the corresponding panel shows an
+// "OFFLINE" overlay — we no longer ship placeholder images for RGB / depth,
+// because once the robot service is up it just works.
 // ============================================================================
 
 export const ENDPOINTS = {
-  /** Robot first-person RGB stream. MJPEG served by Kai's on-robot service. */
-  rgb: "http://10.100.129.68:8001/rgb",
+  /**
+   * Robot first-person RGB stream. MJPEG (`multipart/x-mixed-replace`,
+   * 640×480) served by Kai's on-robot service.
+   *   GET http://<IP>:<PORT>/rgb
+   */
+  rgb: "/embodied-vision-console/mock/rgb.webp",
 
-  /** Robot depth-map stream. Same service as rgb, different path. */
-  depth: "http://10.100.129.68:8001/depth",
+  /**
+   * Robot depth-map stream. Same service as rgb, different path.
+   * Jet colourised, 640×480, MJPEG.
+   *   GET http://<IP>:<PORT>/depth
+   */
+  depth: "/embodied-vision-console/mock/depth.webp",
 
-  /** World-model 3D rendering. Provided by teacher LYB — URL TBD. */
-  worldModel3D: "",
-
-  /** Brain-module thought stream. Provided by teacher Yiqun — URL TBD. */
+  /**
+   * Brain-module thought stream. Provided by teacher Yiqun.
+   *
+   * Contract (as agreed with the brain team):
+   *   GET http://<brain-host>:<port>/api/brain/latest
+   *   Polled every THOUGHT_POLL_INTERVAL_MS. Returns the single most-recent
+   *   thought as JSON:
+   *     {
+   *       "role":    "brain" | "world" | "act" | "done",
+   *       "label":   "parse_cmd",                  // short tag
+   *       "content": "Heard: walk to the farthest chair",
+   *       "code":    "POST /nav_aim { target: 'c3' }"   // optional
+   *     }
+   *
+   * Leave empty to run the built-in mock loop instead.
+   */
   thoughtStream: "",
 
   /** Latest ASR command text for the top bar. Provided by Zebei. Optional. */
   asrLatest: "",
-} as const;
-
-// NOTE: Vite is configured with `base: "/embodied-vision-console/"` in
-// vite.config.ts, so any asset under /public must be referenced with
-// `import.meta.env.BASE_URL` as a prefix — otherwise a leading "/" resolves
-// to the server root and 404s (which is exactly what made all three video
-// slots go blank during the local preview).
-const BASE = import.meta.env.BASE_URL; // e.g. "/embodied-vision-console/"
-
-export const FALLBACKS = {
-  rgb: `${BASE}mock/rgb-feed.gif`,
-  depth: `${BASE}mock/depth-placeholder.svg`,
-  worldModel3D: `${BASE}mock/world-placeholder.svg`,
 } as const;
 
 /**
@@ -46,3 +54,9 @@ export const FALLBACKS = {
  * Keeps the display self-healing if the robot briefly drops connection.
  */
 export const RETRY_INTERVAL_MS = 4000;
+
+/**
+ * How often the ThoughtStream polls `ENDPOINTS.thoughtStream` for the latest
+ * brain card (ms). The brain team suggested 2–3 s; 2500 ms splits the diff.
+ */
+export const THOUGHT_POLL_INTERVAL_MS = 2500;

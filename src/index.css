@@ -26,91 +26,18 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 222 50% 7%;
-    --foreground: 210 40% 92%;
-
-    --card: 222 40% 9%;
-    --card-foreground: 210 40% 92%;
-
-    --popover: 222 40% 9%;
-    --popover-foreground: 210 40% 92%;
-
-    --primary: 187 100% 50%;
-    --primary-foreground: 222 50% 7%;
-
-    --secondary: 222 30% 15%;
-    --secondary-foreground: 210 40% 85%;
-
-    --muted: 222 25% 18%;
-    --muted-foreground: 215 15% 55%;
-
-    --accent: 222 35% 14%;
-    --accent-foreground: 210 40% 92%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 222 30% 18%;
-    --input: 222 30% 15%;
-    --ring: 187 100% 50%;
-
-    --radius: 0.25rem;
-
-    /* Role colors */
-    --brain: 220 80% 65%;
-    --brain-bg: 222 40% 17%;
-    --world: 263 90% 66%;
-    --world-bg: 270 35% 16%;
-    --act: 155 85% 33%;
-    --act-bg: 160 50% 11%;
-    --success: 160 68% 52%;
-    --neon-cyan: 187 100% 50%;
-
-    /* Glow effects */
-    --glow-cyan: 0 0 8px hsl(187 100% 50% / 0.4), 0 0 20px hsl(187 100% 50% / 0.15);
-    --glow-brain: 0 0 8px hsl(220 80% 65% / 0.4);
-    --glow-world: 0 0 8px hsl(263 90% 66% / 0.4);
-    --glow-act: 0 0 8px hsl(155 85% 33% / 0.4);
-    --glow-success: 0 0 8px hsl(160 68% 52% / 0.4);
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground;
-    /* Trick: list the nice English fonts FIRST, then CJK fonts.
-       Browsers use the first font that contains a glyph for each character,
-       so English characters render in Space Grotesk / Inter, and Chinese
-       characters automatically fall through to PingFang / Microsoft YaHei. */
+    /* English-first font stack with automatic CJK fallback to system fonts. */
     font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont,
-      'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+      sans-serif;
     font-feature-settings: 'ss01', 'cv11', 'calt';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     letter-spacing: 0.005em;
-  }
-
-  /* Headings get a slightly tighter tracking for that crisp HUD look. */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont,
-      'PingFang SC', 'Microsoft YaHei', sans-serif;
-    letter-spacing: -0.01em;
-    font-feature-settings: 'ss01', 'cv11';
+    background: #0a0e1a;
+    color: #e5f6ff;
   }
 
   code, .font-mono, pre, kbd, samp {
@@ -118,97 +45,4 @@
       Consolas, monospace;
     font-feature-settings: 'calt', 'liga', 'zero';
   }
-}
-
-/* Grid background pattern */
-.bg-grid {
-  background-image:
-    linear-gradient(hsl(187 100% 50% / 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(187 100% 50% / 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-/* Neon text glow */
-.text-glow-cyan {
-  text-shadow: 0 0 8px hsl(187 100% 50% / 0.5), 0 0 20px hsl(187 100% 50% / 0.2);
-}
-.text-glow-brain {
-  text-shadow: 0 0 6px hsl(220 80% 65% / 0.5);
-}
-.text-glow-world {
-  text-shadow: 0 0 6px hsl(263 90% 66% / 0.5);
-}
-.text-glow-act {
-  text-shadow: 0 0 6px hsl(155 85% 33% / 0.5);
-}
-
-/* Card glow borders */
-.card-glow-brain {
-  box-shadow: inset 0 0 0 1px hsl(220 80% 65% / 0.3), 0 0 12px hsl(220 80% 65% / 0.1);
-}
-.card-glow-world {
-  box-shadow: inset 0 0 0 1px hsl(263 90% 66% / 0.3), 0 0 12px hsl(263 90% 66% / 0.1);
-}
-.card-glow-act {
-  box-shadow: inset 0 0 0 1px hsl(155 85% 33% / 0.3), 0 0 12px hsl(155 85% 33% / 0.1);
-}
-.card-glow-cyan {
-  box-shadow: inset 0 0 0 1px hsl(187 100% 50% / 0.3), 0 0 12px hsl(187 100% 50% / 0.1);
-}
-
-/* Pulsing animation */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.animate-blink {
-  animation: blink 1s step-end infinite;
-}
-
-/* Detection box breathing */
-@keyframes breathe {
-  0%, 100% { box-shadow: 0 0 8px hsl(187 100% 50% / 0.4), inset 0 0 0 2px hsl(187 100% 50% / 0.8); }
-  50% { box-shadow: 0 0 20px hsl(187 100% 50% / 0.6), inset 0 0 0 2px hsl(187 100% 50% / 1); }
-}
-.animate-breathe {
-  animation: breathe 2s ease-in-out infinite;
-}
-
-@keyframes card-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-card-in {
-  animation: card-in 0.18s ease-out both;
-}
-
-/* Success card glow */
-.card-glow-success {
-  box-shadow: inset 0 0 0 1px hsl(160 68% 52% / 0.4), 0 0 12px hsl(160 68% 52% / 0.15);
-}
-
-/* Noise texture for depth map simulation */
-.depth-gradient {
-  background: linear-gradient(135deg, 
-    hsl(0 80% 45%) 0%, 
-    hsl(30 90% 55%) 20%, 
-    hsl(60 90% 55%) 35%, 
-    hsl(120 70% 45%) 50%, 
-    hsl(200 80% 50%) 70%, 
-    hsl(240 70% 40%) 100%
-  );
 }
