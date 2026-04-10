@@ -50,3 +50,24 @@
     font-feature-settings: 'calt', 'liga', 'zero';
   }
 }
+
+/* Cyan-themed scrollbar used by ThoughtStream panels */
+.scrollbar-cyan {
+  scrollbar-color: rgba(0, 229, 255, 0.25) transparent;
+  scrollbar-width: thin;
+}
+.scrollbar-cyan::-webkit-scrollbar {
+  width: 6px;   /* w-1.5 = 6px */
+  height: 6px;  /* h-1.5 = 6px */
+}
+.scrollbar-cyan::-webkit-scrollbar-track {
+  background: #0A0E1A;
+}
+.scrollbar-cyan::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(0, 229, 255, 0.25);
+  border: 1px solid rgba(0, 229, 255, 0.1);
+}
+.scrollbar-cyan:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.45);
+}

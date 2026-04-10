@@ -19,6 +19,21 @@ import { useEffect, useRef } from "react";
 
 type Vec3 = [number, number, number];
 
+// Maximum number of points the accumulated point cloud can hold.
+const MAX_POINTS = 520;
+// Distance from the camera to the scene origin (controls zoom level).
+const CAM_DIST = 14;
+// Half-extent of the ground grid (grid spans from -GRID_SIZE to +GRID_SIZE).
+const GRID_SIZE = 10;
+// Spacing between ground grid lines.
+const GRID_STEP = 1;
+// Camera orbit yaw speed (radians per second).
+const ORBIT_YAW_SPEED = 0.15;
+// Camera pitch oscillation speed (radians per second).
+const PITCH_OSCILLATION_SPEED = 0.4;
+// Box glow pulsation speed (radians per second).
+const BOX_GLOW_SPEED = 1.2;
+
 const WorldModel3D = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -30,7 +45,7 @@ const WorldModel3D = () => {
 
     let raf = 0;
     let running = true;
-    let t0 = performance.now();
+    const t0 = performance.now();
 
     // ---------- scene definition ----------
     // Obstacle boxes: [cx, cz, w, d, h]
@@ -44,7 +59,6 @@ const WorldModel3D = () => {
 
     // Persistent point cloud — grows as the robot "scans" the world.
     const cloud: Vec3[] = [];
-    const MAX_POINTS = 520;
 
     // Trajectory trail of the moving robot marker.
     const trail: Array<[number, number]> = [];
@@ -83,16 +97,16 @@ const WorldModel3D = () => {
       // Orbit yaw around Y.
       const cy = Math.cos(camYaw);
       const sy = Math.sin(camYaw);
-      let xr = cy * x + sy * z;
-      let zr = -sy * x + cy * z;
-      let yr = y;
+      const xr = cy * x + sy * z;
+      const zr = -sy * x + cy * z;
+      const yr = y;
       // Pitch around X.
       const cp = Math.cos(camPitch);
       const sp = Math.sin(camPitch);
       const yr2 = cp * yr - sp * zr;
       const zr2 = sp * yr + cp * zr;
       // Pull scene in front of camera.
-      const camDist = 14;
+      const camDist = CAM_DIST;
       const zc = zr2 + camDist;
       if (zc <= 0.1) return null;
       const f = Math.min(W, H) * 0.9;
@@ -170,8 +184,8 @@ const WorldModel3D = () => {
       const H = canvas.clientHeight;
 
       // Slow orbit + gentle breathing pitch.
-      const yaw = t * 0.15;
-      const pitch = 0.55 + Math.sin(t * 0.4) * 0.04;
+      const yaw = t * ORBIT_YAW_SPEED;
+      const pitch = 0.55 + Math.sin(t * PITCH_OSCILLATION_SPEED) * 0.04;
 
       // Background — deep space gradient.
       const g = ctx.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, Math.max(W, H));
@@ -181,8 +195,8 @@ const WorldModel3D = () => {
       ctx.fillRect(0, 0, W, H);
 
       // Ground grid.
-      const GRID = 10; // half-extent
-      const STEP = 1;
+      const GRID = GRID_SIZE;
+      const STEP = GRID_STEP;
       ctx.lineWidth = 1;
       for (let i = -GRID; i <= GRID; i += STEP) {
         drawLine(
@@ -209,7 +223,7 @@ const WorldModel3D = () => {
 
       // Boxes (wireframe obstacles).
       boxes.forEach((b, idx) => {
-        const glow = 0.5 + 0.5 * Math.sin(t * 1.2 + idx);
+        const glow = 0.5 + 0.5 * Math.sin(t * BOX_GLOW_SPEED + idx);
         drawBoxWire(b, yaw, pitch, W, H, glow);
       });
 

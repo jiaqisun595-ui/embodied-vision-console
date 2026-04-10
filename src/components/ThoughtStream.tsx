@@ -160,15 +160,7 @@ const ThoughtStream = () => {
       {/* Scrollable card column */}
       <div
         ref={scrollRef}
-        className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-2 scroll-smooth
-          [scrollbar-color:rgba(0,229,255,0.25)_transparent] [scrollbar-width:thin]
-          [&::-webkit-scrollbar]:w-1.5
-          [&::-webkit-scrollbar-track]:bg-[#0A0E1A]
-          [&::-webkit-scrollbar-thumb]:rounded-full
-          [&::-webkit-scrollbar-thumb]:bg-[#00E5FF]/25
-          [&::-webkit-scrollbar-thumb]:border
-          [&::-webkit-scrollbar-thumb]:border-[#00E5FF]/10
-          hover:[&::-webkit-scrollbar-thumb]:bg-[#00E5FF]/45"
+        className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-2 scroll-smooth scrollbar-cyan"
       >
         {displayed.map((card, i) => {
           const rs = roleStyle[card.role];
@@ -226,15 +218,7 @@ const ThoughtStream = () => {
                 </div>
                 {card.code && (
                   <pre
-                    className="relative mt-2 overflow-x-auto rounded border border-[#00E5FF]/15 bg-black/50 p-2 font-mono text-[11px] text-cyan-300/80
-                      [scrollbar-color:rgba(0,229,255,0.25)_transparent] [scrollbar-width:thin]
-                      [&::-webkit-scrollbar]:h-1.5
-                      [&::-webkit-scrollbar-track]:bg-black/60
-                      [&::-webkit-scrollbar-thumb]:rounded-full
-                      [&::-webkit-scrollbar-thumb]:bg-[#00E5FF]/25
-                      [&::-webkit-scrollbar-thumb]:border
-                      [&::-webkit-scrollbar-thumb]:border-[#00E5FF]/10
-                      hover:[&::-webkit-scrollbar-thumb]:bg-[#00E5FF]/45"
+                    className="relative mt-2 overflow-x-auto rounded border border-[#00E5FF]/15 bg-black/50 p-2 font-mono text-[11px] text-cyan-300/80 scrollbar-cyan"
                   >
                     {card.code}
                   </pre>
