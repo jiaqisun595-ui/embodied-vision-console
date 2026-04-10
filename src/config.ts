@@ -45,6 +45,17 @@ export const ENDPOINTS = {
    */
   thoughtStream: "",
 
+  /**
+   * World-model GLB endpoint. Provided by teacher LYB.
+   *
+   * Contract:
+   *   GET <base>/api/world/latest
+   *   Returns JSON: { url: string, timestamp: number }
+   *
+   * Leave empty to fall back to the local mock GLB.
+   */
+  worldModel: "",
+
   /** Latest ASR command text for the top bar. Provided by Zebei. Optional. */
   asrLatest: "",
 } as const;
@@ -60,3 +71,9 @@ export const RETRY_INTERVAL_MS = 4000;
  * brain card (ms). The brain team suggested 2–3 s; 2500 ms splits the diff.
  */
 export const THOUGHT_POLL_INTERVAL_MS = 2500;
+
+/**
+ * How often the WorldModel3D polls `ENDPOINTS.worldModel` for the latest
+ * GLB URL (ms).
+ */
+export const WORLD_POLL_INTERVAL_MS = 5000;
