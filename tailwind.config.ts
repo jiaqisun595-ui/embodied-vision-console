@@ -33,51 +33,36 @@ export default {
         "thought-in": {
           "0%": {
             opacity: "0",
-            transform:
-              "translateX(-40px) translateY(6px) skewX(-8deg) scale(0.96)",
-            filter: "blur(6px)",
-            boxShadow: "0 0 0 rgba(0,229,255,0)",
-          },
-          "55%": {
-            opacity: "1",
-            transform: "translateX(4px) translateY(0) skewX(1deg) scale(1.015)",
-            filter: "blur(0)",
-            boxShadow: "0 0 24px rgba(0,229,255,0.45)",
+            transform: "translateX(-12px) translateY(4px)",
           },
           "100%": {
             opacity: "1",
-            transform: "translateX(0) translateY(0) skewX(0) scale(1)",
-            filter: "blur(0)",
-            boxShadow: "0 0 0 rgba(0,229,255,0)",
+            transform: "translateX(0) translateY(0)",
           },
         },
         // Horizontal scanline that sweeps across a card right after it lands.
         "thought-scan": {
           "0%": { transform: "translateX(-100%)", opacity: "0" },
-          "15%": { opacity: "1" },
-          "85%": { opacity: "1" },
-          "100%": { transform: "translateX(100%)", opacity: "0" },
+          "20%": { opacity: "1" },
+          "80%": { opacity: "0.6" },
+          "100%": { transform: "translateX(300%)", opacity: "0" },
         },
         // Timeline dot ignition flash.
         "thought-dot": {
           "0%": {
             transform: "scale(0)",
-            boxShadow: "0 0 0 0 rgba(0,229,255,0.9)",
-          },
-          "60%": {
-            transform: "scale(1.6)",
-            boxShadow: "0 0 0 10px rgba(0,229,255,0)",
+            opacity: "0",
           },
           "100%": {
             transform: "scale(1)",
-            boxShadow: "0 0 0 0 rgba(0,229,255,0)",
+            opacity: "1",
           },
         },
       },
       animation: {
-        "thought-in": "thought-in 0.65s cubic-bezier(0.22, 1.2, 0.36, 1) both",
-        "thought-scan": "thought-scan 0.9s ease-out 0.2s both",
-        "thought-dot": "thought-dot 0.7s ease-out both",
+        "thought-in": "thought-in 0.4s ease-out both",
+        "thought-scan": "thought-scan 1.2s ease-in-out 0.15s both",
+        "thought-dot": "thought-dot 0.35s ease-out both",
       },
     },
   },
