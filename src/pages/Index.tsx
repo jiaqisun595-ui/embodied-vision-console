@@ -8,7 +8,7 @@ import WorldModel3D from "@/components/WorldModel3D";
 
 const Index = () => {
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#0A0E1A] text-[#00E5FF] font-sans">
+    <div className="h-screen w-screen flex flex-col overflow-hidden text-[#00E5FF] font-sans">
       {/* ---------- TopBar ---------- */}
       <header className="h-16 shrink-0 border-b border-[#00E5FF]/30 flex items-center justify-between px-8">
         <div className="text-xl tracking-widest">
