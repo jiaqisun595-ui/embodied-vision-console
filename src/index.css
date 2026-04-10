@@ -37,6 +37,10 @@
     text-rendering: optimizeLegibility;
     letter-spacing: 0.005em;
     background: #0a0e1a;
+    background-image:
+      linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
     color: #e5f6ff;
   }
 
