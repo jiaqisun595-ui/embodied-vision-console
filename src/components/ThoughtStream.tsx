@@ -32,27 +32,31 @@ interface DisplayedThought extends ThoughtItem {
 
 const roleStyle: Record<
   ThoughtRole,
-  { name: string; dot: string; accent: string }
+  { name: string; dot: string; accent: string; glow: string }
 > = {
   brain: {
     name: "BRAIN",
     dot: "bg-fuchsia-400 shadow-[0_0_8px_rgba(244,114,182,0.8)]",
     accent: "text-fuchsia-300",
+    glow: "rgba(244,114,182,0.5)",
   },
   world: {
     name: "WORLD",
     dot: "bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]",
     accent: "text-cyan-300",
+    glow: "rgba(34,211,238,0.5)",
   },
   act: {
     name: "ACT",
     dot: "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]",
     accent: "text-amber-300",
+    glow: "rgba(251,191,36,0.5)",
   },
   done: {
     name: "DONE",
     dot: "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]",
     accent: "text-emerald-300",
+    glow: "rgba(52,211,153,0.5)",
   },
 };
 
@@ -190,16 +194,21 @@ const ThoughtStream = () => {
               </div>
 
               {/* Card body */}
-              <div className="relative flex-1 overflow-hidden rounded-md border border-[#00E5FF]/25 bg-gradient-to-br from-[#0F1524]/90 to-[#0A0E1A]/70 p-3 backdrop-blur-sm">
-                {/* Left accent bar */}
-                <div
-                  className={`pointer-events-none absolute inset-y-0 left-0 w-[2px] ${rs.dot}`}
-                />
-
-                {/* HUD scanline sweep — only on the newest card */}
+              <div
+                className="relative flex-1 overflow-hidden rounded-md border border-[#00E5FF]/25 bg-gradient-to-br from-[#0F1524]/90 to-[#0A0E1A]/70 p-3 backdrop-blur-sm"
+                style={{
+                  boxShadow: `inset 16px 0 24px -12px ${rs.glow}`,
+                }}
+              >
+                {/* Soft sweep highlight on new cards */}
                 {isLatest && (
                   <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                    <div className="absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-[#00E5FF]/25 to-transparent animate-thought-scan" />
+                    <div
+                      className="absolute inset-y-0 left-0 w-2/5 animate-thought-scan"
+                      style={{
+                        background: `linear-gradient(to right, transparent, ${rs.glow.replace('0.5)', '0.12)')}, transparent)`,
+                      }}
+                    />
                   </div>
                 )}
 
