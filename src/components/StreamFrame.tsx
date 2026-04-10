@@ -31,6 +31,8 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
   const [status, setStatus] = useState<Status>(src ? "loading" : "offline");
   const [imgSrc, setImgSrc] = useState<string>(src);
   const retryTimer = useRef<number | null>(null);
+  const retryDelayRef = useRef(RETRY_INTERVAL_MS);
+  const retryCountRef = useRef(0);
 
   // Whenever the configured src changes (HMR after editing config.ts), reset.
   useEffect(() => {
@@ -38,6 +40,8 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
       window.clearTimeout(retryTimer.current);
       retryTimer.current = null;
     }
+    retryDelayRef.current = RETRY_INTERVAL_MS;
+    retryCountRef.current = 0;
     if (src) {
       setStatus("loading");
       setImgSrc(src);
@@ -52,17 +56,30 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
 
   const handleLoad = () => {
     // <img> load fires once the first MJPEG frame arrives.
-    if (src) setStatus("live");
+    if (src) {
+      setStatus("live");
+      retryDelayRef.current = RETRY_INTERVAL_MS;
+      retryCountRef.current = 0;
+    }
   };
+
+  const MAX_RETRY_DELAY = 60_000;
+  const MAX_RETRY_COUNT = 10;
 
   const handleError = () => {
     if (!src) return;
+    retryCountRef.current += 1;
+    if (retryCountRef.current > MAX_RETRY_COUNT) {
+      setStatus("offline");
+      return;
+    }
     setStatus("offline");
-    // Silently retry — cache-bust so the browser actually refetches.
+    const delay = retryDelayRef.current;
+    retryDelayRef.current = Math.min(delay * 2, MAX_RETRY_DELAY);
     retryTimer.current = window.setTimeout(() => {
       setStatus("loading");
       setImgSrc(`${src}${src.includes("?") ? "&" : "?"}_r=${Date.now()}`);
-    }, RETRY_INTERVAL_MS);
+    }, delay);
   };
 
   const statusStyle = {

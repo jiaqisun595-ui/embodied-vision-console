@@ -258,7 +258,7 @@ const WorldModel3D = () => {
           pz + (Math.random() - 0.5) * 0.1,
         ]);
         // Plus some floor scatter.
-        if (Math.random() < 0.4) {
+        if (cloud.length < MAX_POINTS && Math.random() < 0.4) {
           cloud.push([
             (Math.random() - 0.5) * 16,
             Math.random() * 0.08,
