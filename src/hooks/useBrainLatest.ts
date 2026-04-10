@@ -73,8 +73,8 @@ export const useBrainLatest = (
         if (fp === lastFpRef.current) return; // no new card yet
         lastFpRef.current = fp;
         setThoughts((prev) => [...prev, json]);
-      } catch {
-        // Silently ignore — self-healing on next tick.
+      } catch (err) {
+        console.warn("[useBrainLatest] poll failed:", err);
       }
     };
 
