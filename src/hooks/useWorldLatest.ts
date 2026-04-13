@@ -36,7 +36,6 @@ export const useWorldLatest = (): UseWorldLatestResult => {
   useEffect(() => {
     if (isMock) return;
 
-    let cancelled = false;
     const ac = new AbortController();
 
     const tick = async () => {
@@ -48,7 +47,7 @@ export const useWorldLatest = (): UseWorldLatestResult => {
         if (!res.ok) return;
         const json: unknown = await res.json();
         if (!isPayload(json)) return;
-        if (cancelled) return;
+        if (ac.signal.aborted) return;
 
         setConnected(true);
         if (json.timestamp === lastTsRef.current) return;
@@ -62,7 +61,6 @@ export const useWorldLatest = (): UseWorldLatestResult => {
     tick();
     const id = window.setInterval(tick, WORLD_POLL_INTERVAL_MS);
     return () => {
-      cancelled = true;
       ac.abort();
       window.clearInterval(id);
     };

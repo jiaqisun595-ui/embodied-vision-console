@@ -1,16 +1,11 @@
 // Mock data for the left-column ThoughtStream.
 // Swap this file's export for the real API response shape when the brain
 // module endpoint is ready. The ThoughtStream component only depends on the
-// ThoughtItem type below.
+// ThoughtItem type from @/types/thought.
 
-export type ThoughtRole = "brain" | "world" | "act" | "done";
-
-export interface ThoughtItem {
-  role: ThoughtRole;
-  label: string; // short tag, e.g. "parse_cmd"
-  content: string; // main text shown on the card
-  code?: string; // optional monospace code/JSON block
-}
+import type { ThoughtItem } from "@/types/thought";
+export type { ThoughtItem };
+export type { ThoughtRole } from "@/types/thought";
 
 export const MOCK_THOUGHTS: ThoughtItem[] = [
   {

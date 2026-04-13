@@ -13,15 +13,11 @@
 // ThoughtItem[] differs.
 
 import { useEffect, useRef, useState } from "react";
-import { MOCK_THOUGHTS, type ThoughtItem, type ThoughtRole } from "@/data/mockThoughts";
-import { ENDPOINTS, THOUGHT_POLL_INTERVAL_MS } from "@/config";
+import { MOCK_THOUGHTS } from "@/data/mockThoughts";
+import type { ThoughtItem, ThoughtRole } from "@/types/thought";
+import { ENDPOINTS, THOUGHT_POLL_INTERVAL_MS, CARD_INTERVAL_MS, MAX_VISIBLE_CARDS } from "@/config";
 import { useBrainLatest } from "@/hooks/useBrainLatest";
-
-// How often a MOCK card appears (ms). Only used when no live endpoint is set.
-const CARD_INTERVAL_MS = 1800;
-// How many cards to keep on screen before dropping the oldest. Prevents
-// unbounded DOM growth during long demo loops.
-const MAX_VISIBLE_CARDS = 40;
+import { useReportConnection } from "@/contexts/ConnectionStatus";
 
 interface DisplayedThought extends ThoughtItem {
   // Unique per render, so React keys stay stable across the infinite loop.
@@ -86,6 +82,11 @@ const ThoughtStream = () => {
     liveEndpoint,
     THOUGHT_POLL_INTERVAL_MS,
   );
+
+  const report = useReportConnection();
+  useEffect(() => {
+    report("BRAIN", liveEndpoint ? (liveConnected ? "live" : "connecting") : "mock");
+  }, [liveEndpoint, liveConnected, report]);
 
   // Append new LIVE cards as they arrive from the brain endpoint.
   const liveSeenRef = useRef(0);
@@ -153,10 +154,10 @@ const ThoughtStream = () => {
     <div className="flex h-full w-full flex-col p-4">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-xs tracking-[0.3em] text-[#00E5FF]/80">
+        <span className="text-xs tracking-[0.3em] text-accent/80">
           THOUGHT STREAM
         </span>
-        <span className="text-[10px] tracking-widest text-[#00E5FF]/40">
+        <span className="text-[10px] tracking-widest text-accent/40">
           {liveEndpoint ? (liveConnected ? "LIVE" : "LIVE · WAITING") : "MOCK"}
         </span>
       </div>
@@ -179,7 +180,7 @@ const ThoughtStream = () => {
               }}
             >
               {/* Timestamp gutter */}
-              <div className="w-10 shrink-0 pt-2 text-right font-mono text-[10px] text-[#00E5FF]/40">
+              <div className="w-10 shrink-0 pt-2 text-right font-mono text-[10px] text-accent/40">
                 {card.time}
               </div>
 
@@ -190,12 +191,12 @@ const ThoughtStream = () => {
                     isLatest ? "animate-pulse" : ""
                   }`}
                 />
-                <div className="my-1 w-px flex-1 bg-gradient-to-b from-[#00E5FF]/40 via-[#00E5FF]/15 to-transparent" />
+                <div className="my-1 w-px flex-1 bg-gradient-to-b from-accent/40 via-accent/15 to-transparent" />
               </div>
 
               {/* Card body */}
               <div
-                className="relative flex-1 overflow-hidden rounded-md border border-[#00E5FF]/25 bg-gradient-to-br from-[#0F1524]/90 to-[#0A0E1A]/70 p-3 backdrop-blur-sm"
+                className="relative flex-1 overflow-hidden rounded-md border border-accent/25 bg-gradient-to-br from-surface/90 to-base/70 p-3 backdrop-blur-sm"
                 style={{
                   boxShadow: `inset 16px 0 24px -12px ${rs.glow}`,
                 }}
@@ -218,7 +219,7 @@ const ThoughtStream = () => {
                   >
                     {rs.name}
                   </span>
-                  <span className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-[10px] text-[#00E5FF]/60">
+                  <span className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-[10px] text-accent/60">
                     {card.label}
                   </span>
                 </div>
@@ -227,7 +228,7 @@ const ThoughtStream = () => {
                 </div>
                 {card.code && (
                   <pre
-                    className="relative mt-2 overflow-x-auto rounded border border-[#00E5FF]/15 bg-black/50 p-2 font-mono text-[11px] text-cyan-300/80 scrollbar-cyan"
+                    className="relative mt-2 overflow-x-auto rounded border border-accent/15 bg-black/50 p-2 font-mono text-[11px] text-cyan-300/80 scrollbar-cyan"
                   >
                     {card.code}
                   </pre>

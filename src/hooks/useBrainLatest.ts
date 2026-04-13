@@ -18,7 +18,7 @@
 //     mid-exhibition just because the brain service blips.
 
 import { useEffect, useRef, useState } from "react";
-import type { ThoughtItem, ThoughtRole } from "@/data/mockThoughts";
+import type { ThoughtItem, ThoughtRole } from "@/types/thought";
 
 const VALID_ROLES: readonly ThoughtRole[] = ["brain", "world", "act", "done"];
 
@@ -35,7 +35,7 @@ const isThoughtItem = (x: unknown): x is ThoughtItem => {
 };
 
 const fingerprint = (t: ThoughtItem) =>
-  `${t.role}|${t.label}|${t.content}|${t.code ?? ""}`;
+  JSON.stringify([t.role, t.label, t.content, t.code ?? ""]);
 
 export interface UseBrainLatestResult {
   thoughts: ThoughtItem[];
@@ -54,7 +54,6 @@ export const useBrainLatest = (
   useEffect(() => {
     if (!endpoint) return;
 
-    let cancelled = false;
     const ac = new AbortController();
 
     const tick = async () => {
@@ -66,7 +65,7 @@ export const useBrainLatest = (
         if (!res.ok) return;
         const json: unknown = await res.json();
         if (!isThoughtItem(json)) return;
-        if (cancelled) return;
+        if (ac.signal.aborted) return;
 
         setConnected(true);
         const fp = fingerprint(json);
@@ -81,7 +80,6 @@ export const useBrainLatest = (
     tick();
     const id = window.setInterval(tick, intervalMs);
     return () => {
-      cancelled = true;
       ac.abort();
       window.clearInterval(id);
     };

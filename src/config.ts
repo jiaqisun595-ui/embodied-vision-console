@@ -18,14 +18,14 @@ export const ENDPOINTS = {
    * 640×480) served by Kai's on-robot service.
    *   GET http://<IP>:<PORT>/rgb
    */
-  rgb: "/mock/rgb.webp",
+  rgb: import.meta.env.VITE_RGB_ENDPOINT || "/mock/rgb.webp",
 
   /**
    * Robot depth-map stream. Same service as rgb, different path.
    * Jet colourised, 640×480, MJPEG.
    *   GET http://<IP>:<PORT>/depth
    */
-  depth: "/mock/depth.webp",
+  depth: import.meta.env.VITE_DEPTH_ENDPOINT || "/mock/depth.webp",
 
   /**
    * Brain-module thought stream. Provided by teacher Yiqun.
@@ -43,7 +43,7 @@ export const ENDPOINTS = {
    *
    * Leave empty to run the built-in mock loop instead.
    */
-  thoughtStream: "/proxy",
+  thoughtStream: import.meta.env.VITE_THOUGHT_STREAM_ENDPOINT || "/proxy",
 
   /**
    * World-model GLB endpoint. Provided by teacher LYB.
@@ -54,10 +54,18 @@ export const ENDPOINTS = {
    *
    * Leave empty to fall back to the local mock GLB.
    */
-  worldModel: "",
+  worldModel: import.meta.env.VITE_WORLD_MODEL_ENDPOINT || "",
 
-  /** Latest ASR command text for the top bar. Provided by Zebei. Optional. */
-  asrLatest: "",
+  /**
+   * ASR latest command endpoint. Provided by Zebei.
+   *
+   * Contract:
+   *   GET http://<asr-host>/api/asr/latest
+   *   Returns JSON: { text: string }
+   *
+   * Leave empty to show the default placeholder text.
+   */
+  asrLatest: import.meta.env.VITE_ASR_ENDPOINT || "",
 } as const;
 
 /**
@@ -77,3 +85,18 @@ export const THOUGHT_POLL_INTERVAL_MS = 2500;
  * GLB URL (ms).
  */
 export const WORLD_POLL_INTERVAL_MS = 5000;
+
+/**
+ * How often the header polls `ENDPOINTS.asrLatest` for the latest
+ * ASR command text (ms).
+ */
+export const ASR_POLL_INTERVAL_MS = 3000;
+
+// --- 展示调参 ---
+export const CARD_INTERVAL_MS = 1800;
+export const MAX_VISIBLE_CARDS = 40;
+export const MAX_RETRY_DELAY = 60_000;
+export const MAX_RETRY_COUNT = 10;
+export const STAR_COUNT = 80;
+export const STREAM_COUNT = 3;
+export const PARTICLES_PER_STREAM = 30;

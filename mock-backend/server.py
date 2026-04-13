@@ -45,6 +45,16 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Type","application/json; charset=utf-8")
             self.end_headers()
             self.wfile.write(data.encode("utf-8"))
+        elif self.path == "/api/world/latest":
+            data = json.dumps({
+                "url": "/mock/world.glb",
+                "timestamp": int(time.time())
+            })
+            self.send_response(200)
+            self._cors()
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(data.encode("utf-8"))
         else:
             self.send_response(404)
             self._cors()

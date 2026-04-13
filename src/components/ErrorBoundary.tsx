@@ -6,13 +6,14 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  error: Error | null;
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false };
+  state: State = { hasError: false, error: null };
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -22,12 +23,15 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex h-screen w-screen items-center justify-center bg-[#0A0E1A] font-mono text-[#00E5FF]/70">
+        <div className="flex h-screen w-screen items-center justify-center bg-base font-mono text-accent/70">
           <div className="text-center">
             <div className="text-lg tracking-widest">系统异常，正在恢复…</div>
+            {this.state.error?.message && (
+              <div className="mt-2 text-xs text-accent/40">{this.state.error.message}</div>
+            )}
             <button
-              className="mt-4 rounded border border-[#00E5FF]/30 px-4 py-1 text-sm text-[#00E5FF]/50 hover:bg-[#00E5FF]/10"
-              onClick={() => this.setState({ hasError: false })}
+              className="mt-4 rounded border border-accent/30 px-4 py-1 text-sm text-accent/50 hover:bg-accent/10"
+              onClick={() => this.setState({ hasError: false, error: null })}
             >
               重试
             </button>
