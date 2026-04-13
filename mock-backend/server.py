@@ -58,5 +58,6 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
-print("Mock 后端已启动，共 22 条思考卡片，循环播放")
-HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()
+PORT = 9001
+print(f"Mock 后端已启动在端口 {PORT}，共 {len(THOUGHTS)} 条思考卡片，循环播放")
+HTTPServer(("0.0.0.0", PORT), Handler).serve_forever()

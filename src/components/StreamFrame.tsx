@@ -13,6 +13,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { RETRY_INTERVAL_MS } from "@/config";
+import DecoratedPanel from "./DecoratedPanel";
 
 type Status = "live" | "loading" | "offline";
 
@@ -101,7 +102,13 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
   }[status];
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-md border border-[#00E5FF]/25 bg-[#0A0E1A]">
+    <DecoratedPanel
+      label={label}
+      subLabel={subLabel}
+      statusText={statusStyle.text}
+      statusClassName={statusStyle.className}
+      statusDotClassName={statusStyle.dotClass}
+    >
       {/* Stream layer. Only mount the <img> when we actually have a URL,
           otherwise we'd get a broken-image icon flashing behind the overlay. */}
       {imgSrc && (
@@ -126,35 +133,7 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
           </div>
         </div>
       )}
-
-      {/* Vignette + scanline overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.55))]" />
-      <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,229,255,0.05)_0px,rgba(0,229,255,0.05)_1px,transparent_1px,transparent_3px)] mix-blend-overlay" />
-
-      {/* Corner brackets */}
-      <div className="pointer-events-none absolute left-2 top-2 h-4 w-4 border-l-2 border-t-2 border-[#00E5FF]/70" />
-      <div className="pointer-events-none absolute right-2 top-2 h-4 w-4 border-r-2 border-t-2 border-[#00E5FF]/70" />
-      <div className="pointer-events-none absolute bottom-2 left-2 h-4 w-4 border-b-2 border-l-2 border-[#00E5FF]/70" />
-      <div className="pointer-events-none absolute bottom-2 right-2 h-4 w-4 border-b-2 border-r-2 border-[#00E5FF]/70" />
-
-      {/* Top-left label */}
-      <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 font-mono text-[11px] tracking-[0.25em] text-[#00E5FF]">
-        <span className="font-bold drop-shadow-[0_0_6px_rgba(0,229,255,0.8)]">
-          {label}
-        </span>
-        {subLabel && (
-          <span className="text-[10px] text-[#00E5FF]/60">· {subLabel}</span>
-        )}
-      </div>
-
-      {/* Top-right status pill */}
-      <div
-        className={`pointer-events-none absolute right-3 top-3 flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[10px] tracking-widest ${statusStyle.className}`}
-      >
-        <span className={`h-1.5 w-1.5 rounded-full ${statusStyle.dotClass}`} />
-        {statusStyle.text}
-      </div>
-    </div>
+    </DecoratedPanel>
   );
 };
 

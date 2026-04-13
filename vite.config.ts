@@ -4,13 +4,20 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // Served under /embodied-vision-console/ on the static host — this prefix
-  // must match the `<link>` and font paths in index.css.
+  // Served at the root path "/" on the static host.
+  // If deploying under a subpath (e.g., /embodied-vision-console/), change this accordingly.
   base: "/",
   server: {
     host: "::",
     port: 8080,
     hmr: { overlay: false },
+    proxy: {
+      "/proxy": {
+        target: "http://localhost:9001",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/proxy/, ""),
+      },
+    },
   },
   plugins: [react()],
   resolve: {

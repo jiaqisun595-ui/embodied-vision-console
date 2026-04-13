@@ -1,21 +1,21 @@
 /* Local variable fonts — no dependency on Google Fonts / network. */
 @font-face {
   font-family: 'Space Grotesk';
-  src: url('/fonts/SpaceGrotesk-Variable.woff2') format('woff2');
+  src: url('fonts/SpaceGrotesk-Variable.woff2') format('woff2');
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter-Variable.woff2') format('woff2');
+  src: url('fonts/Inter-Variable.woff2') format('woff2');
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'JetBrains Mono';
-  src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  src: url('fonts/JetBrainsMono-Variable.woff2') format('woff2');
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;

@@ -10,6 +10,7 @@
 import "@google/model-viewer";
 import { ENDPOINTS } from "@/config";
 import { useWorldLatest } from "@/hooks/useWorldLatest";
+import DecoratedPanel from "./DecoratedPanel";
 
 const WorldModel3D = () => {
   const { modelUrl, connected } = useWorldLatest();
@@ -34,7 +35,13 @@ const WorldModel3D = () => {
         };
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-md border border-[#00E5FF]/25 bg-[#0A0E1A]">
+    <DecoratedPanel
+      label="WORLD MODEL"
+      subLabel="3D RECON"
+      statusText={statusStyle.text}
+      statusClassName={statusStyle.className}
+      statusDotClassName={statusStyle.dotClass}
+    >
       {/* GLB viewer */}
       {modelUrl && (
         <model-viewer
@@ -55,33 +62,7 @@ const WorldModel3D = () => {
           }}
         />
       )}
-
-      {/* Vignette + scanline overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.55))]" />
-      <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,229,255,0.05)_0px,rgba(0,229,255,0.05)_1px,transparent_1px,transparent_3px)] mix-blend-overlay" />
-
-      {/* Corner brackets */}
-      <div className="pointer-events-none absolute left-2 top-2 h-4 w-4 border-l-2 border-t-2 border-[#00E5FF]/70" />
-      <div className="pointer-events-none absolute right-2 top-2 h-4 w-4 border-r-2 border-t-2 border-[#00E5FF]/70" />
-      <div className="pointer-events-none absolute bottom-2 left-2 h-4 w-4 border-b-2 border-l-2 border-[#00E5FF]/70" />
-      <div className="pointer-events-none absolute bottom-2 right-2 h-4 w-4 border-b-2 border-r-2 border-[#00E5FF]/70" />
-
-      {/* Top-left label */}
-      <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 font-mono text-[11px] tracking-[0.25em] text-[#00E5FF]">
-        <span className="font-bold drop-shadow-[0_0_6px_rgba(0,229,255,0.8)]">
-          WORLD MODEL
-        </span>
-        <span className="text-[10px] text-[#00E5FF]/60">· 3D RECON</span>
-      </div>
-
-      {/* Top-right status pill */}
-      <div
-        className={`pointer-events-none absolute right-3 top-3 flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[10px] tracking-widest ${statusStyle.className}`}
-      >
-        <span className={`h-1.5 w-1.5 rounded-full ${statusStyle.dotClass}`} />
-        {statusStyle.text}
-      </div>
-    </div>
+    </DecoratedPanel>
   );
 };
 
