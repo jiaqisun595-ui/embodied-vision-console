@@ -18,14 +18,14 @@ export const ENDPOINTS = {
    * 640×480) served by Kai's on-robot service.
    *   GET http://<IP>:<PORT>/rgb
    */
-  rgb: "/embodied-vision-console/mock/rgb.webp",
+  rgb: "/mock/rgb.webp",
 
   /**
    * Robot depth-map stream. Same service as rgb, different path.
    * Jet colourised, 640×480, MJPEG.
    *   GET http://<IP>:<PORT>/depth
    */
-  depth: "/embodied-vision-console/mock/depth.webp",
+  depth: "/mock/depth.webp",
 
   /**
    * Brain-module thought stream. Provided by teacher Yiqun.
@@ -43,7 +43,7 @@ export const ENDPOINTS = {
    *
    * Leave empty to run the built-in mock loop instead.
    */
-  thoughtStream: "",
+  thoughtStream: "/proxy",
 
   /**
    * World-model GLB endpoint. Provided by teacher LYB.

@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig({
   // Served under /embodied-vision-console/ on the static host — this prefix
   // must match the `<link>` and font paths in index.css.
-  base: "/embodied-vision-console/",
+  base: "/",
   server: {
     host: "::",
     port: 8080,
