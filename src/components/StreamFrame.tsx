@@ -12,7 +12,8 @@
 // retry scheduled via RETRY_INTERVAL_MS.
 
 import { useEffect, useRef, useState } from "react";
-import { RETRY_INTERVAL_MS } from "@/config";
+import { RETRY_INTERVAL_MS, MAX_RETRY_DELAY, MAX_RETRY_COUNT } from "@/config";
+import { useReportConnection, type SourceName } from "@/contexts/ConnectionStatus";
 import DecoratedPanel from "./DecoratedPanel";
 
 type Status = "live" | "loading" | "offline";
@@ -26,10 +27,25 @@ interface Props {
   src: string;
   /** Optional custom object-fit. Defaults to "cover". */
   fit?: "cover" | "contain";
+  /** When set, reports connection status to ConnectionStatusContext. */
+  sourceId?: SourceName;
 }
 
-const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
+const STATUS_MAP: Record<Status, "live" | "connecting" | "offline"> = {
+  live: "live",
+  loading: "connecting",
+  offline: "offline",
+};
+
+const StreamFrame = ({ label, subLabel, src, fit = "cover", sourceId }: Props) => {
   const [status, setStatus] = useState<Status>(src ? "loading" : "offline");
+  const report = useReportConnection();
+
+  // Report status changes to the global context when sourceId is provided.
+  useEffect(() => {
+    if (!sourceId) return;
+    report(sourceId, src ? STATUS_MAP[status] : "mock");
+  }, [sourceId, status, src, report]);
   const [imgSrc, setImgSrc] = useState<string>(src);
   const retryTimer = useRef<number | null>(null);
   const retryDelayRef = useRef(RETRY_INTERVAL_MS);
@@ -64,9 +80,6 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
     }
   };
 
-  const MAX_RETRY_DELAY = 60_000;
-  const MAX_RETRY_COUNT = 10;
-
   const handleError = () => {
     if (!src) return;
     retryCountRef.current += 1;
@@ -79,7 +92,9 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
     retryDelayRef.current = Math.min(delay * 2, MAX_RETRY_DELAY);
     retryTimer.current = window.setTimeout(() => {
       setStatus("loading");
-      setImgSrc(`${src}${src.includes("?") ? "&" : "?"}_r=${Date.now()}`);
+      const url = new URL(src, window.location.origin);
+      url.searchParams.set("_r", String(Date.now()));
+      setImgSrc(url.toString());
     }, delay);
   };
 
@@ -125,9 +140,9 @@ const StreamFrame = ({ label, subLabel, src, fit = "cover" }: Props) => {
       {/* Offline placeholder — plain HUD text, no external asset needed. */}
       {status === "offline" && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center font-mono text-[11px] tracking-[0.3em] text-[#00E5FF]/50">
-            <div className="text-[#00E5FF]/80">NO SIGNAL</div>
-            <div className="mt-1 text-[9px] text-[#00E5FF]/40">
+          <div className="text-center font-mono text-[11px] tracking-[0.3em] text-accent/50">
+            <div className="text-accent/80">NO SIGNAL</div>
+            <div className="mt-1 text-[9px] text-accent/40">
               waiting for {label}
             </div>
           </div>

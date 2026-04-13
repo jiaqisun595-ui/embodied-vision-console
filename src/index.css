@@ -25,6 +25,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-accent-rgb: 0, 229, 255;
+  --color-accent: #00E5FF;
+  --color-surface: #0F1524;
+  --color-base: #0A0E1A;
+}
+
 @layer base {
   body {
     /* English-first font stack with automatic CJK fallback to system fonts. */
@@ -36,10 +43,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     letter-spacing: 0.005em;
-    background: #0a0e1a;
+    background: var(--color-base);
     background-image:
-      linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(var(--color-accent-rgb), 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--color-accent-rgb), 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
     color: #e5f6ff;
   }
@@ -53,7 +60,7 @@
 
 /* Cyan-themed scrollbar used by ThoughtStream panels */
 .scrollbar-cyan {
-  scrollbar-color: rgba(0, 229, 255, 0.25) transparent;
+  scrollbar-color: rgba(var(--color-accent-rgb), 0.25) transparent;
   scrollbar-width: thin;
 }
 .scrollbar-cyan::-webkit-scrollbar {
@@ -61,13 +68,13 @@
   height: 6px;  /* h-1.5 = 6px */
 }
 .scrollbar-cyan::-webkit-scrollbar-track {
-  background: #0A0E1A;
+  background: var(--color-base);
 }
 .scrollbar-cyan::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  background: rgba(0, 229, 255, 0.25);
-  border: 1px solid rgba(0, 229, 255, 0.1);
+  background: rgba(var(--color-accent-rgb), 0.25);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.1);
 }
 .scrollbar-cyan:hover::-webkit-scrollbar-thumb {
-  background: rgba(0, 229, 255, 0.45);
+  background: rgba(var(--color-accent-rgb), 0.45);
 }

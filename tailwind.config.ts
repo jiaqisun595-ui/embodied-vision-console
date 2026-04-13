@@ -4,6 +4,14 @@ export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        accent: {
+          DEFAULT: '#00E5FF',
+          dim: 'rgba(0, 229, 255, 0.4)',
+        },
+        surface: '#0F1524',
+        base: '#0A0E1A',
+      },
       fontFamily: {
         // English glyphs render in Space Grotesk / Inter; CJK characters
         // automatically fall through to PingFang / Microsoft YaHei.

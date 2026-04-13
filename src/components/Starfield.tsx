@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { STAR_COUNT, STREAM_COUNT, PARTICLES_PER_STREAM } from "@/config";
 
 interface Star {
   x: number;
@@ -21,10 +22,6 @@ interface StreamParticle {
   radius: number;
   alpha: number;
 }
-
-const STAR_COUNT = 80;
-const STREAM_COUNT = 3;
-const PARTICLES_PER_STREAM = 30;
 
 function createStar(w: number, h: number): Star {
   const isBright = Math.random() < 0.15;

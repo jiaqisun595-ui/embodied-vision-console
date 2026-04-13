@@ -8,7 +8,7 @@ export default defineConfig({
   // If deploying under a subpath (e.g., /embodied-vision-console/), change this accordingly.
   base: "/",
   server: {
-    host: "::",
+    host: "0.0.0.0",
     port: 8080,
     hmr: { overlay: false },
     proxy: {

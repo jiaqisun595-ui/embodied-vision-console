@@ -7,20 +7,27 @@
 // HUD chrome (border, corner brackets, vignette, scanlines, label, status
 // badge) mirrors StreamFrame.tsx for visual consistency.
 
+import { useEffect } from "react";
 import "@google/model-viewer";
 import { ENDPOINTS } from "@/config";
 import { useWorldLatest } from "@/hooks/useWorldLatest";
+import { useReportConnection } from "@/contexts/ConnectionStatus";
 import DecoratedPanel from "./DecoratedPanel";
 
 const WorldModel3D = () => {
   const { modelUrl, connected } = useWorldLatest();
   const isMock = !ENDPOINTS.worldModel;
 
+  const report = useReportConnection();
+  useEffect(() => {
+    report("WORLD", isMock ? "mock" : connected ? "live" : "connecting");
+  }, [isMock, connected, report]);
+
   const statusStyle = isMock
     ? {
         text: "MOCK",
-        className: "bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/40",
-        dotClass: "bg-[#00E5FF] animate-pulse",
+        className: "bg-accent/10 text-accent border-accent/40",
+        dotClass: "bg-accent animate-pulse",
       }
     : connected
       ? {

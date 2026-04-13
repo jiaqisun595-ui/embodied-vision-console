@@ -18,7 +18,7 @@
 python server.py
 ```
 
-服务器将在 `http://localhost:8080` 启动。
+服务器将在 `http://localhost:9001` 启动。
 
 ## API 文档
 
@@ -49,7 +49,7 @@ python server.py
 
 ## 注意事项
 
-1. 服务器默认端口为 8080
+1. 服务器默认端口为 9001
 2. 数据会循环播放，共 22 条思考卡片
 3. 每次调用 `/api/brain/latest` 会返回下一条思考
 4. 支持 CORS，允许所有来源访问
